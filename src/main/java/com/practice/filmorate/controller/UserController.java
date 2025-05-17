@@ -1,5 +1,6 @@
 package com.practice.filmorate.controller;
 
+import com.practice.filmorate.validation.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.practice.filmorate.model.User;
@@ -15,13 +16,16 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody User user) {
+        ValidatorUtil.validateUser(user);
         return userService.create(user);
     }
 
     @PutMapping
     public User update(@RequestBody User user) {
+        ValidatorUtil.validateUser(user);
         return userService.update(user);
     }
+
 
     @GetMapping
     public List<User> findAll() {
