@@ -1,12 +1,11 @@
 package com.practice.filmorate.service;
 
+import com.practice.filmorate.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.practice.filmorate.model.Film;
 import com.practice.filmorate.storage.FilmStorage;
-
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +18,9 @@ public class FilmService {
     }
 
     public Film update(Film film) {
+        if (filmStorage.findById(film.getId()).isEmpty()) {
+            throw new NotFoundException("Фильм не найден");
+        }
         return filmStorage.update(film);
     }
 
@@ -28,7 +30,7 @@ public class FilmService {
 
     public Film findById(Long id) {
         return filmStorage.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Film not found"));
+                .orElseThrow(() -> new NotFoundException("Фильм не найден"));
     }
 
     public void addLike(Long filmId, Long userId) {

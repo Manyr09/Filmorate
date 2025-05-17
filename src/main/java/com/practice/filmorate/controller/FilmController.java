@@ -1,5 +1,6 @@
 package com.practice.filmorate.controller;
 
+import com.practice.filmorate.validation.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.practice.filmorate.model.Film;
@@ -15,13 +16,16 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film film) {
+        ValidatorUtil.validateFilm(film);
         return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@RequestBody Film film) {
+        ValidatorUtil.validateFilm(film);
         return filmService.update(film);
     }
+
 
     @GetMapping
     public List<Film> findAll() {
