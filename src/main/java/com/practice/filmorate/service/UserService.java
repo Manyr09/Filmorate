@@ -1,5 +1,6 @@
 package com.practice.filmorate.service;
 
+import com.practice.filmorate.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.practice.filmorate.model.User;
@@ -9,7 +10,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +21,9 @@ public class UserService {
     }
 
     public User update(User user) {
+        if (userStorage.findById(user.getId()).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         return userStorage.update(user);
     }
 
@@ -30,7 +33,7 @@ public class UserService {
 
     public User findById(Long id) {
         return userStorage.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
     public void addFriend(Long userId, Long friendId) {
