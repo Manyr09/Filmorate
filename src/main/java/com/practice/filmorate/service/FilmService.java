@@ -1,60 +1,50 @@
 package com.practice.filmorate.service;
 
-import com.practice.filmorate.exception.FilmNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import com.practice.filmorate.model.Film;
 import com.practice.filmorate.storage.FilmStorage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
+    public Film create(Film film) {
+        return filmStorage.create(film);
     }
 
-    public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
+    public Film update(Film film) {
+        return filmStorage.update(film);
     }
 
-    public Film updateFilm(Film film) {
-        getFilmOrThrow(film.getId());
-        return filmStorage.updateFilm(film);
+    public List<Film> findAll() {
+        return filmStorage.findAll();
     }
 
-    public Film getFilm(long id) {
-        return getFilmOrThrow(id);
+    public Film findById(Long id) {
+        return filmStorage.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Film not found"));
     }
 
-    public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
-    }
-
-    public void addLike(long filmId, long userId) {
-        Film film = getFilmOrThrow(filmId);
+    public void addLike(Long filmId, Long userId) {
+        Film film = findById(filmId);
         film.getLikes().add(userId);
     }
 
-    public void removeLike(long filmId, long userId) {
-        Film film = getFilmOrThrow(filmId);
+    public void removeLike(Long filmId, Long userId) {
+        Film film = findById(filmId);
         film.getLikes().remove(userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
-        List<Film> films = filmStorage.getAllFilms();
-        films.sort((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()));
-        return films.subList(0, Math.min(count, films.size()));
-    }
-
-    private Film getFilmOrThrow(long id) {
-        Film film = filmStorage.getFilm(id);
-        if (film == null) {
-            throw new FilmNotFoundException("Фильм с ID " + id + " не найден.");
-        }
-        return film;
+    public List<Film> getPopular(int count) {
+        return filmStorage.findAll().stream()
+                .sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
