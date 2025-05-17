@@ -1,35 +1,47 @@
 package com.practice.filmorate.storage;
 
-import com.practice.filmorate.model.User;
 import org.springframework.stereotype.Component;
+import com.practice.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
-    private long idCounter = 1;
+    private static Long idGlobal = 0L;
 
     @Override
-    public User createUser(User user) {
-        user.setId(idCounter++);
+    public User create(User user) {
+        user.setId(getNextId());
         users.put(user.getId(), user);
         return user;
     }
+
     @Override
-    public User updateUser(User user) {
+    public User update(User user) {
+        if (!users.containsKey(user.getId())) {
+            throw new NoSuchElementException("User not found");
+        }
         users.put(user.getId(), user);
         return user;
     }
+
     @Override
-    public List<User> getAllUsers() {
+    public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
+
     @Override
-    public User getUser(long userId) {
-        return users.get(userId);
+    public Optional<User> findById(Long id) {
+        return Optional.ofNullable(users.get(id));
+    }
+
+    private static Long getNextId(){
+        return ++idGlobal;
     }
 }
