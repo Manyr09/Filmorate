@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserService userService;
 
     public Film create(Film film) {
         return filmStorage.create(film);
@@ -35,11 +36,13 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         Film film = findById(filmId);
+        userService.findById(userId);
         film.getLikes().add(userId);
     }
 
     public void removeLike(Long filmId, Long userId) {
         Film film = findById(filmId);
+        userService.findById(userId);
         film.getLikes().remove(userId);
     }
 

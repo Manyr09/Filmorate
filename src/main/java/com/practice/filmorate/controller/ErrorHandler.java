@@ -15,24 +15,24 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException ex) {
-        return new ErrorResponse("Ошибка при валидаций.", ex.getMessage());
+        return new ErrorResponse(ex.getMessage(), "Ошибка при валидаций.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException ex) {
-        return new ErrorResponse("Не найдено.", ex.getMessage());
+        return new ErrorResponse( ex.getMessage(), "Не найдено.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAlreadyExistsException(final AlreadyExistException ex) {
-        return new ErrorResponse("Уже существует.", ex.getMessage());
+        return new ErrorResponse(ex.getMessage(), "Уже существует.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenericException(final Throwable ex) {
-        return new ErrorResponse("Произошла непредвиденная ошибка.", ex.getMessage());
+        return new ErrorResponse( ex.getMessage(), "Произошла непредвиденная ошибка.");
     }
 }
